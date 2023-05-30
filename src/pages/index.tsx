@@ -3,12 +3,12 @@ import Head from "next/head";
 import Link from "next/link";
 import { api } from "~/utils/api";
 import { SignIn, SignInButton, SignOutButton } from "@clerk/nextjs";
-import { useClerk, useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-react";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  // const { signOut } = useClerk();
   const user = useUser();
+
+  const { data } = api.posts.getAll.useQuery();
   return (
     <>
       <Head>
@@ -17,12 +17,16 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div style={{color: "white", display: "flex", flexDirection: "column"}}>
+        <div
+          style={{ color: "white", display: "flex", flexDirection: "column" }}
+        >
           {!user.isSignedIn && <SignInButton />}
           {!!user.isSignedIn && <SignOutButton />}
-          {/* <button onClick={() => signOut()}>Sign out</button> */}
         </div>
-        <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
+        {/* <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" /> */}
+        <div>
+          {data?.map((post) => (<div key={post.id}>{post.content}</div>))}
+        </div>
       </main>
     </>
   );
